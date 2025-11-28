@@ -2,3 +2,7 @@ requests
 pytest
 pandas
 scikit-learn
+install
+transformers
+accelerate
+torch
