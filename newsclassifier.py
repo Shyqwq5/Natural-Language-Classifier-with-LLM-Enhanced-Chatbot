@@ -20,10 +20,16 @@ class NewsClassifier:
         return reversed_mapping
 
     def classify_review(self,input):
+        try:
+            self.validate_input(input)
+        except TypeError as e:
+            return e
         vector_input = self.vectorizer.transform([input])
         pred = self.model.predict(vector_input)
         return self.mapping[int(pred[0])]
 
-
+    def validate_input(self,input):
+        if not isinstance(input,str):
+            raise TypeError("not a vaild input")
 
 
