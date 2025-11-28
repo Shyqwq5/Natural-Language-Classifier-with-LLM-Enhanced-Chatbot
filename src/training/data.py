@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-
+#test
 def get_data(path='cleaned_news_data.csv'):
     df = pd.read_csv(path)
     mapping = {}
@@ -19,7 +19,7 @@ def get_data(path='cleaned_news_data.csv'):
 # pd.set_option('display.max_colwidth', None)
 # print(df.head())
 
-def get_vectorized_data(path='cleaned_news_data.csv',test_size = 0.3,RANDOM_SEED = 28):
+def get_vectorized_data(path,test_size = 0.3,RANDOM_SEED = 28):
     X, y,mapping = get_data(path)
 
     RANDOM_SEED = 28

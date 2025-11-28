@@ -2,7 +2,7 @@ import pickle
 
 
 class NewsClassifier:
-    def __init__(self,model_path,mapping_path = 'mapping.pkl',vectorizer_path = 'vectorizer.pkl'):
+    def __init__(self,model_path,mapping_path,vectorizer_path):
         self.model = self.load_from_path(model_path)
         self.vectorizer = self.load_from_path(vectorizer_path)
         self.mapping = self.load_mapping(mapping_path)

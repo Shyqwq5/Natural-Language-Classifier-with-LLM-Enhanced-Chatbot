@@ -2,18 +2,30 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
-from data import get_vectorized_data
+from src.training.data import get_vectorized_data
 import pickle
+from src.utils.get_path import get_path
+import os
+from src.data_processing.ingest import load_data,clean_and_save_news_data
+
+ROOT = get_path(2)
+cleaned_data_path = ROOT/"data"/"processed"/"cleaned_news_data.csv"
+if not os.path.isfile(cleaned_data_path):
+    raw_data_path = ROOT/"data"/"raw"/"labeled_newscatcher_dataset.csv"
+    url = "https://raw.githubusercontent.com/kotartemiy/topic-labeled-news-dataset/refs/heads/master/labeled_newscatcher_dataset.csv"
+    df = load_data(raw_data_path,url)
+    clean_and_save_news_data(df,cleaned_data_path)
 
 RANDOM_SEED = 28
-X_train,X_test,y_train, y_test,mapping,vectorizer = get_vectorized_data(path='cleaned_news_data.csv',test_size = 0.3,RANDOM_SEED=RANDOM_SEED)
+X_train,X_test,y_train, y_test,mapping,vectorizer = get_vectorized_data(cleaned_data_path,test_size = 0.3,RANDOM_SEED=RANDOM_SEED)
 
+save_model_path = ROOT/"src"/'saved_model'
 
-with open('mapping.pkl', 'wb') as f:
+with open(save_model_path/'mapping.pkl', 'wb') as f:
     pickle.dump(mapping, f)
 
 
-with open('vectorizer.pkl', 'wb') as f:
+with open(save_model_path/'vectorizer.pkl', 'wb') as f:
     pickle.dump(vectorizer, f)
 
 #logisticregression model
@@ -25,7 +37,7 @@ lg = LogisticRegression(
 
 lg.fit(X_train, y_train)
 lg_pred = lg.predict(X_test)
-with open('trained_lg_model.pkl', 'wb') as f:
+with open(save_model_path/'trained_lg_model.pkl', 'wb') as f:
     pickle.dump(lg, f)
 print("Accuracy:", accuracy_score(y_test, lg_pred))
 print(classification_report(y_test, lg_pred))
@@ -34,7 +46,7 @@ print(classification_report(y_test, lg_pred))
 nb = MultinomialNB(alpha=0.1)
 nb.fit(X_train, y_train)
 nb_pred = nb.predict(X_test)
-with open('trained_nb_model.pkl', 'wb') as f:
+with open(save_model_path/'trained_nb_model.pkl', 'wb') as f:
     pickle.dump(nb, f)
 print("Accuracy:", accuracy_score(y_test, nb_pred))
 print(classification_report(y_test, nb_pred))
@@ -50,7 +62,7 @@ rf = RandomForestClassifier(
 
 rf.fit(X_train, y_train)
 rf_pred = rf.predict(X_test)
-with open('trained_rf_model.pkl', 'wb') as f:
+with open(save_model_path/'trained_rf_model.pkl', 'wb') as f:
     pickle.dump(rf, f)
 print("rf_accuracy:", accuracy_score(y_test, rf_pred))
 print(classification_report(y_test, rf_pred))

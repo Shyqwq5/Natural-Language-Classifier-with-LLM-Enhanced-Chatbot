@@ -23,7 +23,7 @@ def load_data(path = "labeled_newscatcher_dataset.csv",url = "https://raw.github
     return pd.read_csv(path,sep=';')
 
 
-def clean_and_save_news_data(df,path = 'cleaned_news_data.csv'):
+def clean_and_save_news_data(df,path):
     logger = logging.getLogger(__name__)
     logger.info("ingest_data")
     logger.info("cleaning the data")
@@ -37,3 +37,6 @@ def clean_and_save_news_data(df,path = 'cleaned_news_data.csv'):
     logger.info("data cleaned")
     df.to_csv(path, index=False)
     logger.info("cleaned data saved")
+
+
+#test drop funciton work
