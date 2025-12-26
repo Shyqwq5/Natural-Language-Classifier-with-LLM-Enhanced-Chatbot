@@ -4,21 +4,39 @@ from src.utils.get_path import get_path
 
 
 def extra_title(user_input):
-    assisant = Chatbot("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+    assisant = Chatbot("Qwen/Qwen2.5-3B-Instruct")
 
-    system_prompt = 'You will get a messy input, you job is extracted title from the user\'s input.Output ONLY the exact title text from the user\'s input.'
-
-    assisant.add_system_prompt(system_prompt)
+    system_prompt = 'You will get a messy input, you job is extracted news title from the user\'s input.Output ONLY the exact title text from the user\'s input. Ensure the full title is preserved.'
+    assisant.set_arguments({'do_sample':False,'max_new_tokens':64})
+    assisant.modify_system_prompt(system_prompt)
     output = assisant.generate_reply(user_input)
 
-    first_sentence = output.split(".")[0].strip()
-    return first_sentence
+    return output
 
 def polish_output(user_input):
-    assisant = Chatbot("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
-    system_prompt = 'You are a friendly chatbot. You will receive a news topic, briefly explain what the main topic of the news is.'
-    assisant.set_arguments({'do_sample':False,'max_new_tokens':128})
-    assisant.add_system_prompt(system_prompt)
+    assisant = Chatbot("Qwen/Qwen2.5-3B-Instruct")
+    system_prompt = '''
+    You are a friendly assistant who explains the result of a news classification in natural language.
+
+    You will receive three fields: raw_input, news_title, and news_topic.
+
+    Your task:
+    Provide a concise explanation of the classification using and explicitly including the exact words from news_topic.
+
+    Strict rules:
+
+    The response must include the exact term news_topic as given.
+
+    Base your explanation only on news_topic.
+
+    Do NOT invent, infer, or expand any news content or story.
+
+    Do NOT add background information or examples.
+
+    Keep the explanation short, neutral, and factual.
+    '''
+    assisant.set_arguments({'do_sample':False,'max_new_tokens':64})
+    assisant.modify_system_prompt(system_prompt)
     output = assisant.generate_reply(user_input)
     return output
 
@@ -33,8 +51,10 @@ while True:
     if input_text == 'exit':
         break
     news_headline = extra_title(input_text)
+    print(news_headline)
     classification = news_classifier.classify_review(news_headline)
-    output = polish_output('news_title: ' + news_headline + 'news_topic' + classification)
+    print(classification)
+    output = polish_output('raw_input: '+ input_text + ' news_topic:' + classification)
     print(output)
 
 
