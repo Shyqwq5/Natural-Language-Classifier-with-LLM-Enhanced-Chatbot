@@ -10,6 +10,10 @@ from src.data_processing.ingest import load_data,clean_and_save_news_data
 
 ROOT = get_path(2)
 cleaned_data_path = ROOT/"data"/"processed"/"cleaned_news_data.csv"
+save_model_path = ROOT/"src"/'saved_model'
+os.makedirs(os.path.dirname(cleaned_data_path), exist_ok=True)
+os.makedirs(save_model_path, exist_ok=True)
+
 if not os.path.isfile(cleaned_data_path):
     raw_data_path = ROOT/"data"/"raw"/"labeled_newscatcher_dataset.csv"
     url = "https://raw.githubusercontent.com/kotartemiy/topic-labeled-news-dataset/refs/heads/master/labeled_newscatcher_dataset.csv"
@@ -19,7 +23,7 @@ if not os.path.isfile(cleaned_data_path):
 RANDOM_SEED = 28
 X_train,X_test,y_train, y_test,mapping,vectorizer = get_vectorized_data(cleaned_data_path,test_size = 0.3,RANDOM_SEED=RANDOM_SEED)
 
-save_model_path = ROOT/"src"/'saved_model'
+
 
 with open(save_model_path/'mapping.pkl', 'wb') as f:
     pickle.dump(mapping, f)
